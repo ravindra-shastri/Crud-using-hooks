@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { useState } from 'react';
+import User from './components/User';
+import AddUser from './components/AddUser';
 function App() {
+
+  let [data, setData] =
+    useState(JSON.parse(localStorage.getItem('data')) || []);
+
+  const addUser = (name, username) => {
+    setData(data.concat({ name, username }));
+    localStorage.setItem('data', JSON.stringify(data.concat({ name, username })));
+  };
+
+  const deleteUser = (i) => {
+    let newData = [...data];
+    newData.splice(i, 1);
+    localStorage.setItem('data', JSON.stringify(newData));
+    setData(newData);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>List Of User</h1>
+      <hr />
+      <AddUser addUser={addUser} />
+      <div>
+        {data.length !== 0 && (
+          <div>
+            {data.length > 1 
+            ? `${data.length} User added` 
+            : `${data.length} User added`}{''}
+          </div>
+        )
+        }
+        {data.map((user, i) => (
+          <User key={i} i={i} user={user} username={user.username} deleteUser={deleteUser} />
+        ))}
+      </div>
     </div>
   );
 }
 
 export default App;
+
+
+
+
